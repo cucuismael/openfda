@@ -4,7 +4,7 @@ import json
 
 PORT = 8000
 
-conn = http.client.HTTPConnection('212.128.255.156', PORT)
+conn = http.client.HTTPConnection('localhost', PORT)
 print (conn)
 path= input()
 conn.request("GET","/" + path)
@@ -14,4 +14,4 @@ print (r1)
 print(r1.status, r1.reason)
 
 data1 = r1.read().decode("utf-8")
-
+print(data1)

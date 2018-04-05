@@ -26,15 +26,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             tag=[]
             name=[]
             for i in range(0,10):
-                tag.array(repos['results'][i]['openfda']['brand_name'])
-                name.array(repos['results'][i]['openfda']['generic_name'])
-
-            filename="""
-            """
+                tag.append(repos['results'][i]['openfda']['brand_name'])
+                name.append(repos['results'][i]['openfda']['generic_name'])
+            filename="hola"
         else:
             try:
                 if self.path=="/":
-                    filename = "green.html"
+                    filename = "index.html"
                 else:
                     with open(self.path, "r") as f :
                         filename = f.read()
