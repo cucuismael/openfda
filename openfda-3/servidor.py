@@ -13,16 +13,33 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
         filename = ""
-        if self.path == "/":
-            filename = "green.html"
-        else:
-            if (self.path == "/blue"):
-                filename = "blue.html"
-            elif self.path == "/json":
-                filename = "json.txt"
-            else:
-                filename = "pink.html"
+        if "api" in self.path:
+            headers = {'User-Agent': 'http-client'}
 
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            conn.request("GET","/drug/label.json?search=_exists_:openfda.generic_name+AND+_exists_:openfda.brand_name&limit=10", None, headers)
+            r1 = conn.getresponse()
+            print(r1.status, r1.reason)
+            repos_raw = r1.read().decode("utf-8")
+            conn.close()
+            repos = json.loads(repos_raw)
+            tag=[]
+            name=[]
+            for i in range(0,10):
+                tag.array(repos['results'][i]['openfda']['brand_name'])
+                name.array(repos['results'][i]['openfda']['generic_name'])
+
+            filename="""
+            """
+        else:
+            try:
+                if self.path=="/":
+                    filename = "green.html"
+                else:
+                    with open(self.path, "r") as f :
+                        filename = f.read()
+            except:
+                filename="error.html"
         print("Fichero a servir: {}".format(filename))
         with open(filename, "r") as f:
             contenido = f.read()
@@ -37,7 +54,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 Handler = testHTTPRequestHandler
 
-httpd = socketserver.TCPServer(("", PORT), Handler)
+httpd = socketserver.TCPServer(("0.0.0.0", PORT), Handler)
 print("serving at port", PORT)
 
 try:
