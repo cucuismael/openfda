@@ -37,9 +37,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 </body>
             </html>
             """% (tag,name)
-            filename=archivo
+            contenido=archivo
         elif self.path=="/":
             filename = "index.html"
+            print("Fichero a servir: {}".format(filename))
+            with open(filename, "r") as f:
+                contenido = f.read()
+
 
         else:
             try:
@@ -47,9 +51,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     filename = f.read()
             except:
                 filename="error.html"
-        print("Fichero a servir: {}".format(filename))
-        with open(filename, "r") as f:
-            contenido = f.read()
+            print("Fichero a servir: {}".format(filename))
+            with open(filename, "r") as f:
+                contenido = f.read()
 
         message = contenido
 
