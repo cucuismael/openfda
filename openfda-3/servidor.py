@@ -28,14 +28,23 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             for i in range(0,10):
                 tag.append(repos['results'][i]['openfda']['brand_name'])
                 name.append(repos['results'][i]['openfda']['generic_name'])
-            filename="hola"
+            archivo="""
+            <!doctype html>
+            <html>
+                <body style='background-color: green' >
+                 <h1>tags: %s </h2>
+                 <p>nombres: %s </p>
+                </body>
+            </html>
+            """% (tag,name)
+            filename=archivo
+        elif self.path=="/":
+            filename = "index.html"
+
         else:
             try:
-                if self.path=="/":
-                    filename = "index.html"
-                else:
-                    with open(self.path, "r") as f :
-                        filename = f.read()
+                with open(self.path, "r") as f :
+                    filename = f.read()
             except:
                 filename="error.html"
         print("Fichero a servir: {}".format(filename))
