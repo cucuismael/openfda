@@ -3,8 +3,6 @@ import json
 
 headers = {'User-Agent': 'http-client'}
 
-i=0
-controlador= True
 nombres=[]
 
 conn = http.client.HTTPSConnection("api.fda.gov")
