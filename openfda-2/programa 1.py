@@ -16,12 +16,13 @@ repos_raw = r1.read().decode("utf-8")
 conn.close()
 
 repos = json.loads(repos_raw)
-limite= int(repos['meta']['results']['total'])
+limite= repos['meta']['results']['total']
 print(limite)
-for f in range(0, limite):
-    if repos['results'][i]['openfda']['manufacturer_name'] not in nombres:
-        nombres.append(repos['results'][i]['openfda']['manufacturer_name'])
-
-
+for f in range(0,limite):
+    try:
+        if repos['results'][f]['openfda']['manufacturer_name'] not in nombres:
+            nombres.append(repos['results'][f]['openfda']['manufacturer_name'])
+    except:
+        continue
 
 print(nombres)
