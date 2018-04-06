@@ -9,7 +9,7 @@ nombres=[]
 while controlador:
     conn = http.client.HTTPSConnection("api.fda.gov")
 
-    conn.request("GET", '/drug/label.json?search=openfda.substance_name:"SALICYLIC ACID"&skip='+ str(i) + "&limit=100", None, headers)
+    conn.request("GET", '/drug/label.json?search=openfda.substance_name:"SALICYLIC ACID"&skip='+ str(i)+'&limit=100', None, headers)
     r1 = conn.getresponse()
     print(r1.status, r1.reason)
     repos_raw = r1.read().decode("utf-8")
