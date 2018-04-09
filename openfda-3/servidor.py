@@ -36,6 +36,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
      <p>nombres: %s </p>
   </body>
 </html>
+            <!doctype html>
+            <html>
+                <body style='background-color: green' >
+                 <h1>tags: %s </h1>
+                 <p>nombres: %s </p>
+                </body>
+            </html>
             """% (tag,name)
             contenido=archivo
         elif self.path=="/":
