@@ -29,13 +29,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 tag.append(repos['results'][i]['openfda']['brand_name'])
                 name.append(repos['results'][i]['openfda']['generic_name'])
             archivo="""
-            <!doctype html>
-            <html>
-                <body style='background-color: green' >
-                 <h1>tags: %s </h2>
-                 <p>nombres: %s </p>
-                </body>
-            </html>
+<!DOCTYPE html>
+<html>
+  <body style='background-color: green' >
+     <h1>tags: %s </h2>
+     <p>nombres: %s </p>
+  </body>
+</html>
             """% (tag,name)
             contenido=archivo
         elif self.path=="/":
