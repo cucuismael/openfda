@@ -11,7 +11,8 @@ repos_raw = r1.read().decode("utf-8")
 conn.close()
 
 repos = json.loads(repos_raw)
-
+id=[]
 for i in range(0,10):
     print ("los datos del medicamento", i,"Son: Su id es: ",repos['results'][i]['id'],"usado en: ",repos['results'][i]['purpose'],"fabricado por:",repos['results'][i]['openfda']['manufacturer_name'])
-
+    id.append(repos['results'][i]['id'])
+print(id)
