@@ -67,10 +67,11 @@ def getCompanies():
     return archivo
 @app.route("/listDrugs")
 def getDrugs():
+    limite = request.args.get('limit')
     headers = {'User-Agent': 'http-client'}
 
     conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET", "/drug/label.json?limit=1", None, headers)
+    conn.request("GET", "/drug/label.json?limit="+limite, None, headers)
     r1 = conn.getresponse()
     print(r1.status, r1.reason)
     repos_raw = r1.read().decode("utf-8")
@@ -84,7 +85,7 @@ def getDrugs():
                         </body>
                     </html>
                     """
-    for i in range(0, 10):
+    for i in range(0, repos["meta"]["results"]["limit"]):
         try:
             name = repos["results"][i]["openfda"]["generic_name"]
         except:
@@ -92,4 +93,4 @@ def getDrugs():
         archivo += "<li>{}.<li>\n".format(name)
     return archivo
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8080)
