@@ -4,7 +4,7 @@ import socketserver
 import json
 
 # -- Puerto donde lanzar el servidor
-PORT = 8000
+PORT = 8080
 INDEX_FILE = "index.html"
 socketserver.TCPServer.allow_reuse_address = True
 

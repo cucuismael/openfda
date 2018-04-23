@@ -1,72 +1,183 @@
+from flask import Flask
+from flask import jsonify
+from flask import request
 import http.server
 import socketserver
 import json
-PORT = 8000
+app = Flask(__name__)
+print (app)
+empDB="""<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenFDA-project</title>
+</head>
+<body>
 
-class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
+<form action = "/listDrugs" method="get">
+  <input type="submit" value="Listar fármacos">
+    Limite: <input type="text" name="limit" value="1">
+</form>
 
+<form action = "/ListCompanies" method="get">
+  <input type="submit" value="Listar empresas">
+    Limite: <input type="text" name="limit" value="1">
+</form>
 
-    def do_GET(self):
-        self.send_response(200)
+<form action = "/SearchDrug" method="get">
+  <input type="submit" value="Buscar fármaco">
+    Campo: <input type="text" name="active_ingredient" value="">
+    Limite: <input type="text" name="limit" value="1">
+</form>
 
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+<form action = "/SearchCompany" method="get">
+  <input type="submit" value="Buscar empresas">
+    Campo: <input type="text" name="company" value="">
+    Limite: <input type="text" name="limit" value="1">
+</form>
 
-        filename = ""
-        if "api" in self.path:
-            headers = {'User-Agent': 'http-client'}
+</body>
+</html>"""
 
-            conn = http.client.HTTPSConnection("api.fda.gov")
-            conn.request("GET","/drug/label.json?search=_exists_:openfda.generic_name+AND+_exists_:openfda.brand_name&limit=10", None, headers)
-            r1 = conn.getresponse()
-            print(r1.status, r1.reason)
-            repos_raw = r1.read().decode("utf-8")
-            conn.close()
-            repos = json.loads(repos_raw)
-            tag=[]
-            name=[]
-            for i in range(0,10):
-                tag.append(repos['results'][i]['openfda']['brand_name'])
-                name.append(repos['results'][i]['openfda']['generic_name'])
-            archivo="""
-            <!doctype html>
-            <html>
-                <body style='background-color: green' >
-                 <h1>tags: %s </h1>
-                 <p>nombres: %s </p>
-                </body>
-            </html>
-            """% (tag,name)
-            contenido=archivo
-        else:
-            filename = "index.html"
-            print("Fichero a servir: {}".format(filename))
-            with open(filename, "r") as f:
-                contenido = f.read()
+@app.route("/")
+def hello():
+    return empDB
+@app.route("/ListCompanies",methods=['GET'])
+def getAllCompanies():
+    limite = request.args.get('limit')
+    headers = {'User-Agent': 'http-client'}
 
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET","/drug/label.json?limit="+limite, None,headers)
+    r1 = conn.getresponse()
+    print(r1.status, r1.reason)
+    repos_raw = r1.read().decode("utf-8")
+    conn.close()
+    repos = json.loads(repos_raw)
+    archivo = """
+                <!doctype html>
+                <html>
+                    <body style='background-color: green' >
+                     <p>nombres. tags.</p>
+                    </body>
+                </html>
+                """
+    for i in range(0, repos["meta"]["results"]["limit"]):
+        try:
+            name=repos["results"][i]["openfda"]["manufacturer_name"]
+        except:
+            name="desconocido"
+        archivo+= "<li>{}.<li>\n".format(name)
+    return archivo
+@app.route("/listDrugs")
+def getAllDrugs():
+    limite = request.args.get('limit')
+    headers = {'User-Agent': 'http-client'}
 
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", "/drug/label.json?limit="+limite, None, headers)
+    r1 = conn.getresponse()
+    print(r1.status, r1.reason)
+    repos_raw = r1.read().decode("utf-8")
+    conn.close()
+    repos = json.loads(repos_raw)
+    archivo = """
+                    <!doctype html>
+                    <html>
+                        <body style='background-color: green' >
+                         <p>nombres. tags.</p>
+                        </body>
+                    </html>
+                    """
+    for i in range(0, repos["meta"]["results"]["limit"]):
+        try:
+            name = repos["results"][i]["openfda"]["generic_name"]
+        except:
+            name = "desconocido"
+        archivo += "<li>{}.<li>\n".format(name)
+    return archivo
+@app.route("/SearchDrug")
+def getDrugs():
+    droga= request.args.get('active_ingredient')
+    limite = request.args.get('limit')
+    headers = {'User-Agent': 'http-client'}
+    print(droga, limite)
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", "/drug/label.json?search=active_ingredient:"+droga+"&limit=1", None, headers)
+    r1 = conn.getresponse()
+    print(r1.status, r1.reason)
+    repos_raw = r1.read().decode("utf-8")
+    conn.close()
+    repos = json.loads(repos_raw)
+    archivo = """
+                        <!doctype html>
+                        <html>
+                            <body style='background-color: green' >
+                             <p>id. purpose.</p>
+                            </body>
+                        </html>
+                        """
+    for i in range(0, repos["meta"]["results"]["limit"]):
+        id= repos["results"][i]["id"]
+        try:
+            proposito = repos["results"][i]["openfda"]["generic_name"]
+        except:
+            name = "desconocido"
+        archivo += "<li>{}. {}.<li>\n".format(id,proposito)
+    return archivo
+@app.route("/SearchCompany")
+def getCompanies():
+    company = request.args.get('company')
+    limite = request.args.get('limit')
+    headers = {'User-Agent': 'http-client'}
+    print(company, limite)
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", "/drug/label.json?search=openfda.manufacturer_name:"+company+"&limit="+limite, None, headers)
+    r1 = conn.getresponse()
+    print(r1.status, r1.reason)
+    repos_raw = r1.read().decode("utf-8")
+    conn.close()
+    repos = json.loads(repos_raw)
+    archivo = """
+                        <!doctype html>
+                        <html>
+                            <body style='background-color: green' >
+                             <p>nombres. tags.</p>
+                            </body>
+                        </html>
+                        """
+    for i in range(0, repos["meta"]["results"]["limit"]):
+        try:
+            name = repos["results"][i]["openfda"]["generic_name"]
+        except:
+            name = "desconocido"
+        archivo += "<li>{}.<li>\n".format(name)
+    return archivo
+def getWarnings():
+    limite = request.args.get('limit')
+    headers = {'User-Agent': 'http-client'}
 
-
-        message = contenido
-
-        self.wfile.write(bytes(message, "utf8"))
-        print("File served!")
-        return
-
-
-
-Handler = testHTTPRequestHandler
-
-httpd = socketserver.TCPServer(("0.0.0.0", PORT), Handler)
-print("serving at port", PORT)
-
-try:
-    httpd.serve_forever()
-except KeyboardInterrupt:
-    print("")
-    print("Interrumpido por el usuario")
-
-print("")
-print("Servidor parado")
-httpd.close()
-
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET","/drug/label.json?limit="+limite, None,headers)
+    r1 = conn.getresponse()
+    print(r1.status, r1.reason)
+    repos_raw = r1.read().decode("utf-8")
+    conn.close()
+    repos = json.loads(repos_raw)
+    archivo = """
+                <!doctype html>
+                <html>
+                    <body style='background-color: green' >
+                     <p>nombres. tags.</p>
+                    </body>
+                </html>
+                """
+    for i in range(0, repos["meta"]["results"]["limit"]):
+        try:
+            name=repos["results"][i]["openfda"]["manufacturer_name"]
+        except:
+            name="desconocido"
+        archivo+= "<li>{}.<li>\n".format(name)
+    return archivo
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
