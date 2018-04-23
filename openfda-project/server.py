@@ -54,7 +54,7 @@ def getAllDrugs():
                     <!doctype html>
                     <html>
                         <body style='background-color: green' >
-                         <p>nombres. tags.</p>
+                         <p>nombres.</p>
                         </body>
                     </html>
                     """
@@ -122,6 +122,7 @@ def getCompanies():
             name = "desconocido"
         archivo += "<li>{}.<li>\n".format(name)
     return archivo
+@app.route("/ListWarnings")
 def getWarnings():
     limite = request.args.get('limit')
     headers = {'User-Agent': 'http-client'}
@@ -143,10 +144,11 @@ def getWarnings():
                 """
     for i in range(0, repos["meta"]["results"]["limit"]):
         try:
-            name=repos["results"][i]["openfda"]["manufacturer_name"]
+            nombre = repos["results"][i]["openfda"]["generic_name"]
         except:
-            name="desconocido"
-        archivo+= "<li>{}.<li>\n".format(name)
+            nombre = "medicamento desconocido"
+        advertencia=repos["results"][i]["warnings"]
+        archivo+= "<li>{}. {}.<li>\n".format(nombre ,advertencia)
     return archivo
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8565)
+    app.run(host='0.0.0.0', port=8001)
