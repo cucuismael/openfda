@@ -1,8 +1,6 @@
 from flask import Flask
-from flask import jsonify
 from flask import request
 import http.server
-import socketserver
 import json
 app = Flask(__name__)
 print (app)
@@ -120,7 +118,7 @@ def getDrugs():
     for i in range(0, repos["meta"]["results"]["limit"]):
         id= repos["results"][i]["id"]
         try:
-            proposito = repos["results"][i]["openfda"]["generic_name"]
+            proposito = repos["results"][i]["purpose"]
         except:
             name = "desconocido"
         archivo += "<li>{}. {}.<li>\n".format(id,proposito)
@@ -180,4 +178,4 @@ def getWarnings():
         archivo+= "<li>{}.<li>\n".format(name)
     return archivo
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8080)
