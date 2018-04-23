@@ -4,42 +4,13 @@ import http.server
 import json
 app = Flask(__name__)
 print (app)
-empDB="""<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>OpenFDA-project</title>
-</head>
-<body>
-
-<form action = "/listDrugs" method="get">
-  <input type="submit" value="Listar fármacos">
-    Limite: <input type="text" name="limit" value="1">
-</form>
-
-<form action = "/ListCompanies" method="get">
-  <input type="submit" value="Listar empresas">
-    Limite: <input type="text" name="limit" value="1">
-</form>
-
-<form action = "/SearchDrug" method="get">
-  <input type="submit" value="Buscar fármaco">
-    Campo: <input type="text" name="active_ingredient" value="">
-    Limite: <input type="text" name="limit" value="1">
-</form>
-
-<form action = "/SearchCompany" method="get">
-  <input type="submit" value="Buscar empresas">
-    Campo: <input type="text" name="company" value="">
-    Limite: <input type="text" name="limit" value="1">
-</form>
-
-</body>
-</html>"""
+empDB= "index.html"
 
 @app.route("/")
 def hello():
-    return empDB
+    with open(empDB, "r") as f:
+        archivo = f.read()
+    return archivo
 @app.route("/ListCompanies",methods=['GET'])
 def getAllCompanies():
     limite = request.args.get('limit')
@@ -178,4 +149,4 @@ def getWarnings():
         archivo+= "<li>{}.<li>\n".format(name)
     return archivo
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8565)
