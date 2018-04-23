@@ -36,7 +36,7 @@ def getAllCompanies():
             name=repos["results"][i]["openfda"]["manufacturer_name"]
         except:
             name="desconocido"
-        archivo+= "<li>{}.<li>\n".format(name)
+        archivo+= "<li>{}.<li>".format(name)
     return archivo
 @app.route("/listDrugs")
 def getAllDrugs():
@@ -151,4 +151,4 @@ def getWarnings():
         archivo+= "<li>{}. {}.<li>\n".format(nombre ,advertencia)
     return archivo
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8001)
+    app.run(host='0.0.0.0', port=8000)
