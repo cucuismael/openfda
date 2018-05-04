@@ -36,7 +36,7 @@ def getAllCompanies():
             name=repos["results"][i]["openfda"]["manufacturer_name"]
         except:
             name="desconocido"
-        archivo+= "<li>{}.<li>".format(name)
+        archivo+= "<li>{}.".format(name)
     return archivo
 @app.route("/listDrugs")
 def getAllDrugs():
@@ -58,12 +58,14 @@ def getAllDrugs():
                         </body>
                     </html>
                     """
-    for i in range(0, repos["meta"]["results"]["limit"]):
+    limit = repos["meta"]["results"]["limit"]
+    print(limit)
+    for i in range(0, limit ):
         try:
             name = repos["results"][i]["openfda"]["generic_name"]
         except:
             name = "desconocido"
-        archivo += "<li>{}.<li>\n".format(name)
+        archivo += "<li>{}.\n".format(name)
     return archivo
 @app.route("/SearchDrug")
 def getDrugs():
@@ -92,7 +94,7 @@ def getDrugs():
             proposito = repos["results"][i]["purpose"]
         except:
             name = "desconocido"
-        archivo += "<li>{}. {}.<li>\n".format(id,proposito)
+        archivo += "<li>{}. {}.\n".format(id,proposito)
     return archivo
 @app.route("/SearchCompany")
 def getCompanies():
@@ -120,7 +122,7 @@ def getCompanies():
             name = repos["results"][i]["openfda"]["generic_name"]
         except:
             name = "desconocido"
-        archivo += "<li>{}.<li>\n".format(name)
+        archivo += "<li>{}.\n".format(name)
     return archivo
 @app.route("/ListWarnings")
 def getWarnings():
@@ -148,7 +150,7 @@ def getWarnings():
         except:
             nombre = "medicamento desconocido"
         advertencia=repos["results"][i]["warnings"]
-        archivo+= "<li>{}. {}.<li>\n".format(nombre ,advertencia)
+        archivo+= "<li>{}. {}.\n".format(nombre ,advertencia)
     return archivo
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
