@@ -11,7 +11,7 @@ def hello():
     with open(empDB, "r") as f:
         archivo = f.read()
     return archivo
-@app.route("/ListCompanies",methods=['GET'])
+@app.route("/listCompanies",methods=['GET'])
 def getAllCompanies():
     limite = request.args.get('limit')
     headers = {'User-Agent': 'http-client'}
@@ -67,14 +67,17 @@ def getAllDrugs():
             name = "desconocido"
         archivo += "<li>{}.\n".format(name)
     return archivo
-@app.route("/SearchDrug")
+@app.route("/searchDrug")
 def getDrugs():
     droga= request.args.get('active_ingredient')
-    limite = request.args.get('limit')
+    if request.args.get('limit'):
+        limite = request.args.get('limit')
+    else:
+        limite= 10
     headers = {'User-Agent': 'http-client'}
-    print(droga, limite)
+    print(droga)
     conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET", "/drug/label.json?search=active_ingredient:"+droga+"&limit=1", None, headers)
+    conn.request("GET", "/drug/label.json?search=active_ingredient:"+droga+"&limit="+str(limite), None, headers)
     r1 = conn.getresponse()
     print(r1.status, r1.reason)
     repos_raw = r1.read().decode("utf-8")
@@ -96,14 +99,17 @@ def getDrugs():
             name = "desconocido"
         archivo += "<li>{}. {}.\n".format(id,proposito)
     return archivo
-@app.route("/SearchCompany")
+@app.route("/searchCompany")
 def getCompanies():
     company = request.args.get('company')
-    limite = request.args.get('limit')
+    if request.args.get('limit'):
+        limite = request.args.get('limit')
+    else:
+        limite= 10
     headers = {'User-Agent': 'http-client'}
     print(company, limite)
     conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET", "/drug/label.json?search=openfda.manufacturer_name:"+company+"&limit="+limite, None, headers)
+    conn.request("GET", "/drug/label.json?search=openfda.manufacturer_name:"+company+"&limit="+str(limite), None, headers)
     r1 = conn.getresponse()
     print(r1.status, r1.reason)
     repos_raw = r1.read().decode("utf-8")
@@ -124,13 +130,13 @@ def getCompanies():
             name = "desconocido"
         archivo += "<li>{}.\n".format(name)
     return archivo
-@app.route("/ListWarnings")
+@app.route("/listWarnings")
 def getWarnings():
     limite = request.args.get('limit')
     headers = {'User-Agent': 'http-client'}
 
     conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET","/drug/label.json?limit="+limite, None,headers)
+    conn.request("GET","/drug/label.json?limit="+str(limite), None,headers)
     r1 = conn.getresponse()
     print(r1.status, r1.reason)
     repos_raw = r1.read().decode("utf-8")
@@ -149,7 +155,10 @@ def getWarnings():
             nombre = repos["results"][i]["openfda"]["generic_name"]
         except:
             nombre = "medicamento desconocido"
-        advertencia=repos["results"][i]["warnings"]
+        try:
+            advertencia = repos["results"][i]["warnings"]
+        except:
+            advertencia= "advertencia desconocida"
         archivo+= "<li>{}. {}.\n".format(nombre ,advertencia)
     return archivo
 if __name__ == '__main__':
