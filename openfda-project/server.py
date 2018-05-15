@@ -1,4 +1,4 @@
-from flask import Flask, abort
+from flask import Flask, abort, render_template
 from flask import request
 import http.server
 import json
@@ -12,7 +12,7 @@ def hello():
     with open(empDB, "r") as f:
         archivo = f.read()
     return archivo
-@app.route("/listCompanies",methods=['GET'])
+@app.route("/listCompanies")
 def getAllCompanies():
     limite = request.args.get('limit')
     headers = {'User-Agent': 'http-client'}
@@ -172,6 +172,16 @@ def secret():
 @app.route("/redirect")
 def redirect():
     return "", 302, {'location': 'http://localhost:8000'}#te devuelve a la url propuesta
+@app.errorhandler(404)
+def error():
+    archivo="""<!doctype html>
+                <html>
+                    <body>
+                     <p>has cometido un error</p>
+                     <p><a href="https://localhost:8000">vuelve al inicio</a>
+                    </body>
+                </html>"""
+    return render_template(archivo), 404
 # Te redirige a la url puesta
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
