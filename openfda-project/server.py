@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, abort
 from flask import request
 import http.server
 import json
@@ -7,6 +7,7 @@ print (app)
 empDB= "index.html"
 
 @app.route("/")
+@app.route("/index")
 def hello():
     with open(empDB, "r") as f:
         archivo = f.read()
@@ -131,7 +132,7 @@ def getCompanies():
         archivo += "<li>{}.\n".format(name)
     return archivo
 @app.route("/listWarnings")
-def getWarnings():
+def listWarnings():
     limite = request.args.get('limit')
     headers = {'User-Agent': 'http-client'}
 
@@ -161,5 +162,16 @@ def getWarnings():
             advertencia= "advertencia desconocida"
         archivo+= "<li>{}. {}.\n".format(nombre ,advertencia)
     return archivo
+    # Esta línea no se ejecuta
+# Esta funcion evita la entrada del cliente al servidor, parando la comunicación
+
+
+@app.route("/secret")
+def secret():
+    abort(401)
+@app.route("/redirect")
+def redirect():
+    return "", 302, {'location': 'http://localhost:8000'}#te devuelve a la url propuesta
+# Te redirige a la url puesta
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
